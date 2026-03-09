@@ -1,4 +1,4 @@
-# CV Innovation Labs
+# CV Innopolis Labs
 
 Repository with computer vision lab assignments.
 
