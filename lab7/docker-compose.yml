@@ -1,0 +1,44 @@
+services:
+  lab7-depth-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lab7-depth-app
+    ports:
+      - "7860:7860"
+    environment:
+      PORT: "7860"
+      GRADIO_SERVER_NAME: "0.0.0.0"
+      GRADIO_SERVER_PORT: "7860"
+
+      HF_HOME: "/app/.hf"
+      HF_HUB_CACHE: "/app/.hf/hub"
+      TRANSFORMERS_CACHE: "/app/.hf/hub"
+
+      DEPTH_MODEL_ID: "depth-anything/Depth-Anything-V2-Small-hf"
+      MAX_VIDEO_FRAMES: "240"
+      IMAGE_MAX_SIDE: "640"
+      VIDEO_MAX_SIDE: "320"
+      VIDEO_FPS_LIMIT: "2.5"
+      IMAGE_INFER_SIZE: "384"
+      VIDEO_INFER_SIZE: "224"
+      WEBCAM_INFER_SIZE: "192"
+      VIDEO_BATCH_SIZE: "4"
+      STREAM_EVERY: "0.35"
+      ENABLE_TORCH_COMPILE: "0"
+      PERF_LOG: "0"
+      PERF_LOG_EVERY: "30"
+    volumes:
+      - ./:/app
+      - ./.hf:/app/.hf
+    working_dir: /app
+    command: >
+      sh -lc "mkdir -p /app/.hf/hub && python3 app.py"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
